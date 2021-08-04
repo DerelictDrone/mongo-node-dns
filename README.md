@@ -6,7 +6,7 @@ Utilizes MongoDB as a cache and archive(optional), split into 3 separate servers
 
 # server.js
 
-Handles requests, checking their cache on mongoDB first, next checking for authority records, lastly forwards requests to an array of nameservers on a port of your choosing. If nameservers can't answer the question, the resolver will return a joke(see jokes.js for list) to prevent retrying.
+Handles requests, checking their cache on mongoDB first, next checking for authority records, lastly forwards requests to an array of nameservers on a port of your choosing. If nameservers can't answer the question, the resolver will return a joke(see jokes.js for list) to prevent retrying and supports forcing TTL.
 
 # server-authority-only.js
 
