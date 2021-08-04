@@ -1,0 +1,11 @@
+{
+  "name": "dns-project",
+  "version": "0.0.0",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "dns2": "^2.0.1",
+    "mongoose": "^5.12.8"
+  },
+  "devDependencies": {}
+}
