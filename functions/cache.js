@@ -1,9 +1,10 @@
 const dnsCacheRecords = require('../models/dnsCacheRecord');
+const cfg = require('../connection_config')
 
 exports.cacheRecord = function cacheRecord(dnsRecord) {
   const later = new Date();
-  if (dnsRecord.ttl < 1200) {
-    later.setSeconds(dnsRecord.ttl * 5)
+  if (dnsRecord.ttl < cfg.minTTL) {
+    later.setSeconds(cfg.minTTLOverride(dnsRecord.ttl))
   } else {
     later.setSeconds(dnsRecord.ttl)
   };

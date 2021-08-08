@@ -2,24 +2,42 @@
 Port the resolving server is responsive to, the forward-only server will use it to contact the resolving/caching
 server as well.
 */
-exports.port = "54" // non-standard listening port, so you can use this in conjunction with the auth-only version
+exports.port = "54" // non-standard listening port, so you can use this and the auth-only version on the same system
 
+// Array of nameserver IP's in strings
+exports.nameservers = ['127.0.0.1']
 
 // Controls whether or not requests will be archived
 
-exports.archive = true
+exports.archive = false
 
-// Blanket TTL delivered on cached requests
-
-forcedTTL = [300,true]
+/*
+Blanket TTL delivered on cached requests, if index 2 is true any and all TTL's delivered by this server are replaced
+Note: Affects both server-forwardonly and server.js, server-authorityonly will never force TTL since you're already
+setting the TTL on a per-record basis.
+*/
+forcedTTL = [300,false]
 
 exports.isTTLForced = function(TTL) {
   if(forcedTTL[1]) {
     return forcedTTL[0]
   }
   else {
-    return TTL
+    if(typeof(TTL) === 'object') {
+     actualTTL = TTL.getSeconds() - new Date(Date.now()).getSeconds()
+     return actualTTL
+    } else {
+      return TTL
+    }
   }
+}
+
+// Minimum TTL acceptable in seconds
+exports.minTTL = 1200
+
+// Function run on unacceptably low TTL's before caching. Return a TTL in seconds
+exports.minTTLOverride = function(TTL) {
+  return TTL * 5
 }
 
 /*

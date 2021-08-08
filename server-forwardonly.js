@@ -4,11 +4,8 @@ const jokes = require('./jokes.js');
 
 const options = {
   // available options
-  dns: '127.0.0.1',
-  nameServers: [
-    //'192.168.68.104'
-    '127.0.0.1'
-  ],
+  dns: cfg.nameservers[0],
+  nameServers: cfg.nameservers,
   port: cfg.port,
 };
 

@@ -25,11 +25,8 @@ mongoose.connect(
 
 const options = {
   // available options
-  dns: "127.0.0.1",
-  nameServers: [
-    //'192.168.68.104'
-    '127.0.0.1'
-  ],
+  dns: nameservers[0],
+  nameServers: nameservers,
   port: 53,
 };
 
@@ -130,7 +127,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
               name: dnsRecord.name,
               type: dnsRecord.type,
               class: Packet.CLASS.IN,
-              ttl: cfg.isTTLForced(dnsRecord.ttl),
+              ttl: mgcfg.isTTLForced(dnsRecord.ttl),
               service: dnsRecord.service,
               proto: dnsRecord.proto,
               port: dnsRecord.port,
@@ -158,7 +155,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
           for (let i = 0; i < dnsRecords.length; i++) {
             dnsRecord = dnsRecords[i];
             cache.cacheRecord(dnsRecord);
-            if(cfg.archive) {
+            if(mgcfg.archive) {
               archive.archiveRecord(dnsRecord);
             }
           }
@@ -194,7 +191,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
           name: dnsRecord.name,
           type: dnsRecord.type,
           class: Packet.CLASS.IN,
-          ttl: cfg.isTTLForced(dnsRecord.ttl),
+          ttl: mgcfg.isTTLForced(dnsRecord.ttl),
           service: dnsRecord.data.service,
           proto: dnsRecord.data.proto,
           port: dnsRecord.data.port,
@@ -246,7 +243,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
             name: dnsRecord.name,
             type: dnsRecord.type,
             class: Packet.CLASS.IN,
-            ttl: cfg.isTTLForced(dnsRecord.ttl),
+            ttl: mgcfg.isTTLForced(dnsRecord.ttl),
             service: dnsRecord.data.service,
             proto: dnsRecord.data.proto,
             port: dnsRecord.data.port,
