@@ -47,7 +47,7 @@ if(birthday) {
     process.stdout.write(`Thank you for celebrating my ${age}${suffix} birthday with me!\n`)
     process.exit()
   }
-  funFact = '\nToday is JS-Dig\'s \033[32mbirthday!\033[0m\nJS-Dig was written on August 8th of 2021, at 1AM no less!\nThat means JS-Dig is now' + `${age} year${plural} old!`
+  funFact = '\nToday is JS-Dig\'s \033[32mbirthday!\033[0m\nJS-Dig was written on August 8th of 2021, at 1AM no less!\nThat means JS-Dig is now ' + `${age} year${plural} old!`
 } else {
   funFact = jokes.funFacts[Math.floor(Math.random() * jokes.funFacts.length) + 0]
 }
@@ -110,7 +110,7 @@ const dns = new dns2(options);
             process.stdout.write('No response!\n')
           } else {
           for(let i = 0; i < dnsRecords.length; i++) {
-            process.stdout.write('\nAnswer \033[33;1m'+`${i}`+'\033[0m'+`: ${dnsRecords[i].joinAnswers(`: $`)}\n`)
+            process.stdout.write('\nAnswer \033[33;1m'+`${i}`+'\033[0m'+`: ${bindStyle ? '': '\n'}${dnsRecords[i].joinAnswers(`: $`)}\n`)
           if(i+1 === dnsRecords.length) {
             process.exit()
           }
