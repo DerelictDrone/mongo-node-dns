@@ -12,7 +12,7 @@ if(args.length < 6 && args[3].toLowerCase() !== 'birthday') {
   }catch{} // shut up
 
 
-birthDate = new Date(2021,2,8,1,13,27) // August 8th 2021 (sincerely)
+birthDate = new Date(2021,7,8,1,13,27) // August 8th 2021 (sincerely)
 birthYear = birthDate.getFullYear()
 birthMonth = birthDate.getMonth()
 birthDay = birthDate.getDate()
