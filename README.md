@@ -1,6 +1,6 @@
 # Mongo-Node-DNS
 
-UDP DNS Resolver put together from the DNS2 package by lsong.
+UDP DNS Resolver put together from the DNS2 package by lsong(song940).
 Utilizes MongoDB as a cache and archive(optional), split into 3 separate servers.
 
 # Setting up your mongoDB Database
