@@ -51,7 +51,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
               type: 16,
               class: Packet.CLASS.IN,
               ttl: 1,
-              data: "DNS shit the bed, so here's a joke."
+              data: "DNS failed to resolve, so here's a joke."
             });
             rng = Math.floor((Math.random() * jokes.setups.length) + 0);
             response.answers.push({
