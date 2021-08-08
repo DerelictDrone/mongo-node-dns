@@ -17,3 +17,10 @@ exports.setups = [
   "No joke",
   "An irrelephant",
   "But I had to stop him, because I didnt want him to Babylon"];
+
+  exports.funFacts = [
+    'Not endorsed by ISC, definitely not a part of the BIND package either!',
+    'Made by Phpminor, who should REALLY consider changing his username!',
+    'JS-Dig\'s birthday is August 8th, 2021.\nPlease consider wishing it \033[32mhappy birthday\033[0m when that comes around',
+    'Too horizontal for you?\nTry the \033[32m+newlines\033[0m argument at the end.'
+  ]
