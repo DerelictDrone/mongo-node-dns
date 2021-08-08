@@ -1,6 +1,6 @@
-/*
-Port the authority server is responsive to.
-*/
+
+// Port the authority server is responsive to.
+
 exports.port = "53"
 
 /*
