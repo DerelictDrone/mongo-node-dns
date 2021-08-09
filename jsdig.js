@@ -74,7 +74,7 @@ if(args[3].toLowerCase() === '+help') {
   process.stdout.write('\n If you write \033[32mbirthday\033[0m instead of the port\n you can congratulate DiG with his birthday!')
   process.stdout.write('\n You can get a \033[32mgood old pun\033[0m if your DNS has failed!\n')
   process.stdout.write('\n \033[32mHave fun!\033[0m')
-  process.exit(1)
+  process.exit(0)
 }
 
 
