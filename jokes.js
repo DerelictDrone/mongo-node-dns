@@ -32,8 +32,8 @@ exports.setups = [
    MT + "\nYou should better sleep at this time, \n you look more tired than a extra-sleepy sloth.",
    MT + "\nYou should concentrate on your work, you lazy bun.",
    MT + "\n'I never touch grass, this is \033[32mreal\033[0m grass and I'm gonna touch it.'",
-   MT + "\nBreath some \033[32mfresh air\033[0m rather than sitting in your house."
-  ]
+   MT + "\nBreath some \033[32mfresh air\033[0m rather than sitting in your house.",
+  ] 
   
   let RJ = "Here is a joke, but certainly not a pun: "  // IT MAY ACTUALLY BE A PUN, DON'T ATTACK ME ALRIGHT?
   exports.rjokes = [
@@ -41,7 +41,11 @@ exports.setups = [
    RJ + "\nWhy did the chicken cross the road? To learn JavaScript and make dns.",
    RJ + "\nTwo artists had a art contest. It ended in a draw.",
    RJ + "\nI am afraid for the calender. It's days are numbered.",
-   RJ + "\nCan February March? No, but April May."
+   RJ + "\nCan February March? No, but April May.",
+   RJ + "\nWhy does the Queen have more mobility than the King in chess? \n Because the board looks like a kitchen floor",
+   RJ + "\nHow does a non-binary Samurai kill his Targets? They/Them",
+   RJ + "\nHave you heard of the American Train Killer? \n He had loco motives.",
+   RJ + "\nWhat kind of drink can be bitter and sweet? Reali-tea."
   ]
   
   exports.sad = [
