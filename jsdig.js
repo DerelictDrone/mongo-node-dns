@@ -7,7 +7,7 @@ args = process.argv
 try{
 if(args.length < 6 && args[3].toLowerCase() !== 'birthday') {
   fileName = args[1].split('\\');
-  process.stderr.write(`This program needs at least 4 arguments\nNameservers(IP) Port Name Type. Optional: +newlines\n\nExample:\n${fileName[fileName.length-1]} 8.8.8.8,8.8.4.4,127.0.0.1 53 example.com A +newlines\n\n`)
+  process.stderr.write(`This program needs at least 4 arguments\nNameservers(IP) Port Name Type. Optional: +newlines / +help \n\nExample:\n${fileName[fileName.length-1]} 8.8.8.8,8.8.4.4,127.0.0.1 53 example.com A +newlines\n\n`)
   process.exit();
 }
   }catch{} // shut up
@@ -50,7 +50,7 @@ if(birthday) {
   }
   funFact = '\nToday is JS-Dig\'s \033[32mbirthday!\033[0m\nJS-Dig was written on August 8th of 2021, at 1AM no less!\nThat means JS-Dig is now ' + `${age} year${plural} old!`
 } else {
-   var digchoice = getRandomNumber(1, 10);  // chooses a random Number from 1 to 10
+   var digchoice = getRandomNumber(1, 2);  // chooses a random Number from 1 to 10
    if (digchoice === 1) { 
      funFact = jokes.funFacts[Math.floor(Math.random() * jokes.funFacts.length) + 0] // Gives a FUN FACT to user
    }else if (digchoice === 2) {
@@ -62,6 +62,7 @@ if(args[3].toLowerCase() === 'birthday') {
   process.stdout.write('It\'s not my birthday though...\n')
   process.exit()
 }
+
 
 nameservers = args[2].split(',');
 port = parseInt(args[3]);
