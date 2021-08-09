@@ -26,15 +26,6 @@ exports.setups = [
     FF + '\nToo horizontal for you?\nTry the \033[32m+newlines\033[0m argument at the end.',
     FF + '\nPhpminor is REALLY bad at explaining things! '
   ]
-  
-  let MT = "Here is a Motivation: " // Motivation meant jokingly
-  exports.motivations = [
-   MT + "\nYou should better sleep at this time, \n you look more tired than a extra-sleepy sloth.",
-   MT + "\nYou should concentrate on your work, you lazy bun.",
-   MT + "\n'I never touch grass, this is \033[32mreal\033[0m grass and I'm gonna touch it.'",
-   MT + "\nBreath some \033[32mfresh air\033[0m rather than sitting in your house.",
-  ] 
-  
   let RJ = "Here is a joke, but certainly not a pun: "  // IT MAY ACTUALLY BE A PUN, DON'T ATTACK ME ALRIGHT?
   exports.rjokes = [
    RJ + "\nDid you hear the one about the airplane? Eh, it'd probably fly over your head.",
@@ -46,10 +37,4 @@ exports.setups = [
    RJ + "\nHow does a non-binary Samurai kill his Targets? They/Them",
    RJ + "\nHave you heard of the American Train Killer? \n He had loco motives.",
    RJ + "\nWhat kind of drink can be bitter and sweet? Reali-tea."
-  ]
-  
-  exports.sad = [
-   "I'm not feeling like it today",
-   "I'm not feeling for a joke today",
-   "Maybe next time I will tell you something"
   ]

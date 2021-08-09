@@ -51,14 +51,10 @@ if(birthday) {
   funFact = '\nToday is JS-Dig\'s \033[32mbirthday!\033[0m\nJS-Dig was written on August 8th of 2021, at 1AM no less!\nThat means JS-Dig is now ' + `${age} year${plural} old!`
 } else {
    var digchoice = getRandomNumber(1, 10);  // chooses a random Number from 1 to 10
-   if (digchoice === 1 || digchoice === 2 || digchoice === 3 ) { 
+   if (digchoice === 1) { 
      funFact = jokes.funFacts[Math.floor(Math.random() * jokes.funFacts.length) + 0] // Gives a FUN FACT to user
-   } else if (digchoice === 4 || digchoice === 5 || digchoice === 6) {
-     funFact = jokes.motivations[Math.floor(Math.random() * jokes.motivations.length) + 0] // Gives "MOTIVATION" to the user
-   } else if (digchoice === 7 || digchoice === 8 || digchoice === 9) {
+   }else if (digchoice === 2) {
      funFact = jokes.rjokes[Math.floor(Math.random() * jokes.rjokes.length) + 0] // Gives JOKES (not puns) to the user
-   } else if (digchoice === 10) {
-     funFact = jokes.sad[Math.floor(Math.random() * jokes.sad.length) + 0] // Gives nothing, he is sad today :(
    }
 }
 
