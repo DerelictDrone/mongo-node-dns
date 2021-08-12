@@ -23,5 +23,5 @@ exports.setups = [
     'Made by Phpminor, who should REALLY consider changing his username!',
     'JS-Dig\'s birthday is August 8th, 2021.\nPlease consider wishing it \033[32mhappy birthday\033[0m when that comes around',
     'Too horizontal for you?\nTry the \033[32m+newlines\033[0m argument at the end.',
-    'You can get the help menu by replacing the port with "+help"'
+    'You can access the Helpdesk using \'jsdig.js -h\' to read some offline documentation included with JSDig!'
   ]
