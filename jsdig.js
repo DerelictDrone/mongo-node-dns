@@ -75,16 +75,6 @@ if(process.argv.length <= 7 && process.argv[6] === '+newlines') {
   bindStyle = true
 };
 
-if(args[3].toLowerCase() === '+help') {
-  process.stdout.write('\n \n \n \n \n \n Welcome to the \033[32mhelp menu\033[0m! Here you can find some information about me!:\n ')
-  process.stdout.write('\n If you write \033[32m+newlines\033[0m at the end of your command, you can get better lines!')
-  process.stdout.write('\n If you write \033[32mbirthday\033[0m instead of the port\n you can congratulate DiG with his birthday!')
-  process.stdout.write('\n You can get a \033[32mgood old pun\033[0m if your DNS has failed!\n')
-  process.stdout.write('\n \033[32mHave fun!\033[0m')
-  process.exit(0)
-}
-
-
 const options = {
   // available options
   dns: nameservers[0],
