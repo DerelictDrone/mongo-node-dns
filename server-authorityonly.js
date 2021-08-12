@@ -62,6 +62,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
               ttl: 1,
               data: jokes.punchlines[rng]
             });
+            response.header.rcode = 0x03
             send(response);
           } else {
 
@@ -81,37 +82,29 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
                   {chars = 0; stringified = charSet.join(''); sizedTXT.push(stringified); charSet = [];}
                   chars++
               }}}
-              response.answers.push({
-            name: dnsRecord.name,
-            type: dnsRecord.type,
-            class: Packet.CLASS.IN,
-            ttl: dnsRecord.ttl,
-            service: dnsRecord.data.service,
-            proto: dnsRecord.data.proto,
-            port: dnsRecord.data.port,
-            target: dnsRecord.data.target,
-            weight: dnsRecord.data.weight,
-            primary: dnsRecord.data.primary,
-            admin: dnsRecord.data.admin,
-            serial: dnsRecord.data.serial,
-            refresh: dnsRecord.data.refresh,
-            retry: dnsRecord.data.retry,
-            expiration: dnsRecord.data.expiration,
-            minimum: dnsRecord.data.minimum,
-            address: dnsRecord.data.address,
-            domain: dnsRecord.data.domain,
-            priority: dnsRecord.data.priority,
-            exchange: dnsRecord.data.exchange,
-            ns: dnsRecord.data.ns,
-            data: sizedTXT
-          })
+              dnsRecord = deMongo(dnsRecord)
+              datakeys = Object.keys(dnsRecord.data);
+              datavalues = Object.values(dnsRecord.data);
+              delete dnsRecord.data; // no longer needed
+              keys = Object.keys(dnsRecord);
+              values = Object.values(dnsRecord);
+              let servedObject = {}
+              for(let i = 0; i <= keys.length-2; i++) {
+                servedObject[keys[i]] = values[i]
+              }
+              for(let i = 0; i <= datakeys.length-1; i++) {
+                servedObject[datakeys[i]] = datavalues[i]
+              }
+                servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+                response.answers.push(servedObject)
+            }
           if(i+1 === dnsRecords.length) {
             console.log(response)
             response.header.ancount = response.answers.length
             send(response)
           }
         }
-        }})})
+        })})
 
 
 server.on('request', (request, response, rinfo) => {
