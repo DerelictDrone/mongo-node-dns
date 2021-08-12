@@ -1,16 +1,23 @@
 const dns2 = require('dns2');
-const {classTranslate} = require('./functions/translator');
+const {classTranslate, headerStrings} = require('./functions/translator');
 const jokes = require('./jokes');
+const {enterHelp} = require('./functions/helpdesk.js')
 
 args = process.argv
+fileName = args[1].split('\\');
+msg = `This program needs at least 4 arguments\nNameservers(IP) Port Name Type. Optional: +newlines or /help to enter help mode. \n\nExample:\n${fileName[fileName.length-1]} 8.8.8.8,8.8.4.4,127.0.0.1 53 example.com A +newlines | or ${fileName[fileName.length-1]} /help\n\n`
+if(['/help','help','-help','-h','h','?','-?','/?'].indexOf(args[2]) > -1) {
+  enterHelp()
+ // should be enough cases here.
+  } else {
 try{
-if(args.length < 6 && args[3].toLowerCase() !== 'birthday') {
-  fileName = args[1].split('\\');
-  process.stderr.write(`This program needs at least 4 arguments\nNameservers(IP) Port Name Type. Optional: +newlines\n\nExample:\n${fileName[fileName.length-1]} 8.8.8.8,8.8.4.4,127.0.0.1 53 example.com A +newlines\n\n`)
-  process.exit();
-}
-  }catch{} // shut up
-
+if(args.length < 6 && args[3].toLowerCase() != 'birthday') {
+  process.stderr.write(msg)
+  process.exit();}
+}catch{
+    process.stderr.write(msg)
+    process.exit()} // shut up
+  msg = null;
 
 birthDate = new Date(2021,7,8,1,13,27) // August 8th 2021 (sincerely)
 birthYear = birthDate.getFullYear()
@@ -38,7 +45,7 @@ if(birthday) {
     let suffix;
     stringAge = age.toString()
     length = stringAge.length
-    switch(stringAge[stringAge[stringAge.length-1]]) {
+    switch(parseInt(stringAge[stringAge.length-1])) {
       case 1: {suffix = 'st'; break;}
       case 2: {suffix = 'nd'; break;}
       case 3: {suffix = 'rd'; break;}
@@ -97,7 +104,7 @@ process.stdout.write('\nNode Javascript \033[32;1;4mDiG\033[0m v1.0\n' + funFact
   switch(i) {
     case 0:  {coloredText = '\033[32;1;4m'+ answerValues[i]; break;};                            // Name
     case 1:  {coloredText = '\033[34;1m'  + answerValues[i]; break;};                            // TTL
-    case 2:  {coloredText = '\033[31;4m'  + classTranslate(answerValues[i],'TYPE'); break;};     // Type
+    case 2:  {coloredText = '\033[38;5;220m'  + classTranslate(answerValues[i],'TYPE'); break;};     // Type
     case 3:  {coloredText = '\033[36;1m'  + classTranslate(answerValues[i],'CLASS'); break;};    // Class
     default: {coloredText = '\033[33m'    + answerValues[i]; break;};                            // All data fields
   }
@@ -120,8 +127,23 @@ const dns = new dns2(options);
             process.stdout.write('No response!\n')
           } else {
           for(let i = 0; i < dnsRecords.length; i++) {
-            process.stdout.write('\nAnswer \033[33;1m'+`${i}`+'\033[0m'+`: ${bindStyle ? '': '\n'}${dnsRecords[i].joinAnswers(`: $`)}\n`)
+            process.stdout.write('\nAnswer \033[33;1m'+`${i}`+'\033[0m'+`: ${bindStyle ? '':'\n'}${dnsRecords[i].joinAnswers(`: $`)}\n`)
           if(i+1 === dnsRecords.length) {
+            headers = headerStrings(answer.header)
+            headerKeys = Object.keys(headers);
+            headerValues = Object.values(headers);
+            let newLineCheck = 0
+            let newLine = false
+            process.stdout.write('\n')
+            for(let i = 0; i < headerKeys.length; i++) {
+              if(newLineCheck === 3) {
+                newLine = true
+              }
+              process.stdout.write(`${newLine ? '\n':''}`+headerKeys[i]+': '+headerValues[i]+`${bindStyle ? ' ':'\n'}`)
+              newLineCheck++
+              newLine = false
+            }
             process.exit()
           }
         }}})
+      }

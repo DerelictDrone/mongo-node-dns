@@ -1,12 +1,13 @@
 const dns2 = require('dns2');
 const cfg = require("./connection_config.js");
+const { classTranslate } = require('./functions/translator.js');
 const jokes = require('./jokes.js');
 
 const options = {
   // available options
-  dns: cfg.nameservers[0],
-  nameServers: cfg.nameservers,
-  port: cfg.port,
+  dns: '192.168.68.104',
+  nameServers: ['192.168.68.104'],
+  port: 25565
 };
 
 const dns = new dns2(options);
@@ -19,29 +20,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
   const { name } = question;
   const { type } = question;
 
-    let typeName;
-        switch(type) {
-          case 1: {typeName = "A"; break};
-          case 2: {typeName = "NS"; break};
-          case 5: {typeName = "CNAME"; break};
-          case 6: {typeName = "SOA"; break};
-          case 7: {typeName = "MB"; break};
-          case 8: {typeName = "MG"; break};
-          case 9: {typeName = "MR"; break};
-          case 10: {typeName = "NULL"; break};
-          case 11: {typeName = "WKS"; break};
-          case 12: {typeName = "PTR"; break};
-          case 13: {typeName = "HINFO"; break};
-          case 14: {typeName = "MINFO"; break};
-          case 15: {typeName = "MX"; break};
-          case 16: {typeName = "TXT"; break};
-          case 28: {typeName = "AAAA"; break};
-          case 33: {typeName = "SRV"; break};
-          case 99: {typeName = "SPF"; break};
-          case 253: {typeName = "MAILB"; break};
-          case 254: {typeName = "MAILA"; break};
-          case 255: {typeName = "ANY"; break};
-          default: {console.log("we didn't understand that type, here's the number " + type)}};
+      typeName = classTranslate(type,'TYPE');
 
         dnsRecords = dns.resolve(name, typeName).then(answer => {
           dnsRecords = answer.answers;
@@ -68,34 +47,19 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
               ttl: 1,
               data: jokes.punchlines[rng]
             });
+            response.header.rcode = 0x03
             send(response);
           } else {
           for(let i = 0; i < dnsRecords.length; i++) {
             dnsRecord = dnsRecords[i];
-              response.answers.push({
-            name: dnsRecord.name,
-            type: dnsRecord.type,
-            class: Packet.CLASS.IN,
-            ttl: cfg.isTTLForced(dnsRecord.ttl),
-            service: dnsRecord.service,
-            proto: dnsRecord.proto,
-            port: dnsRecord.port,
-            target: dnsRecord.target,
-            weight: dnsRecord.weight,
-            primary: dnsRecord.primary,
-            admin: dnsRecord.admin,
-            serial: dnsRecord.serial,
-            refresh: dnsRecord.refresh,
-            retry: dnsRecord.retry,
-            expiration: dnsRecord.expiration,
-            minimum: dnsRecord.minimum,
-            address: dnsRecord.address,
-            domain: dnsRecord.domain,
-            priority: dnsRecord.priority,
-            exchange: dnsRecord.exchange,
-            ns: dnsRecord.ns,
-            data: dnsRecord.data
-          })
+            keys = Object.keys(dnsRecord);
+            values = Object.values(dnsRecord);
+            let servedObject = {}
+            for(let i = 0; i <= keys.length-1; i++) {
+              servedObject[keys[i]] = values[i]
+            }
+              servedObject.ttl = cfg.isTTLForced(dnsRecord.ttl)
+              response.answers.push(servedObject)
           if(i+1 === dnsRecords.length) {
             send(response)
             console.log(response)

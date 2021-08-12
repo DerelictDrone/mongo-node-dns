@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const mgcfg = require("./connection_config.js");
 const cache = require('./functions/cache');
 const archive = require('./functions/archive');
+const { classTranslate, deMongo } = require('./functions/translator');
 const mongoCache = require('./functions/resolveFromMongo');
 const jokes = require('./jokes.js');
 console.log("mongodb://" + mgcfg.mongopostuser + ":" + mgcfg.mongopostpass + "@" + mgcfg.mongoserver + ":" + mgcfg.mongoport + mgcfg.mongoargs)
@@ -25,52 +26,25 @@ mongoose.connect(
 
 const options = {
   // available options
-  dns: nameservers[0],
-  nameServers: nameservers,
+  dns: mgcfg.nameservers[0],
+  nameServers: mgcfg.nameservers,
   port: 53,
 };
 
 const dns = new dns2(options);
 
-const {
-  Packet
-} = dns2;
+const { Packet } = dns2;
 
 const server = dns2.createUDPServer((request, send, rinfo) => {
   const response = Packet.createResponseFromRequest(request);
   const [question] = request.questions;
-  const {
-    name
-  } = question;
-  const {
-    type
-  } = question;
+  const { name } = question;
+  const { type } = question;
 
   mongoCache.resolveFromMongo(name, type).then(dnsRecord => {
     if (dnsRecord.length < 1) {
-      let typeName;
-      switch (type) {
-      case 1: {typeName = "A"; break};
-      case 2: {typeName = "NS"; break};
-      case 5: {typeName = "CNAME"; break};
-      case 6: {typeName = "SOA"; break};
-      case 7: {typeName = "MB"; break};
-      case 8: {typeName = "MG"; break};
-      case 9: {typeName = "MR"; break};
-      case 10: {typeName = "NULL"; break};
-      case 11: {typeName = "WKS"; break};
-      case 12: {typeName = "PTR"; break};
-      case 13: {typeName = "HINFO"; break};
-      case 14: {typeName = "MINFO"; break};
-      case 15: {typeName = "MX"; break};
-      case 16: {typeName = "TXT"; break};
-      case 28: {typeName = "AAAA"; break};
-      case 33: {typeName = "SRV"; break};
-      case 99: {typeName = "SPF"; break};
-      case 253: {typeName = "MAILB"; break};
-      case 254: {typeName = "MAILA"; break};
-      case 255: {typeName = "ANY"; break};
-      default: {console.log("we didn't understand that type, here's the number " + type)}};
+
+      typeName = classTranslate(type,'TYPE')
 
       dnsRecords = dns.resolve(name, typeName).then(answer => {
         dnsRecords = answer.answers;
@@ -97,6 +71,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
             ttl: 1,
             data: jokes.punchlines[rng]
           });
+          response.header.rcode = 0x03
           send(response);
         } else {
           let sizedTXT
@@ -123,30 +98,17 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
             }
 
             console.log(dnsRecord);
-            response.answers.push({
-              name: dnsRecord.name,
-              type: dnsRecord.type,
-              class: Packet.CLASS.IN,
-              ttl: mgcfg.isTTLForced(dnsRecord.ttl),
-              service: dnsRecord.service,
-              proto: dnsRecord.proto,
-              port: dnsRecord.port,
-              target: dnsRecord.target,
-              weight: dnsRecord.weight,
-              primary: dnsRecord.primary,
-              admin: dnsRecord.admin,
-              serial: dnsRecord.serial,
-              refresh: dnsRecord.refresh,
-              retry: dnsRecord.retry,
-              expiration: dnsRecord.expiration,
-              minimum: dnsRecord.minimum,
-              address: dnsRecord.address,
-              domain: dnsRecord.domain,
-              priority: dnsRecord.priority,
-              exchange: dnsRecord.exchange,
-              ns: dnsRecord.ns,
-              data: sizedTXT
-            })
+            keys = Object.keys(dnsRecord);
+            values = Object.values(dnsRecord);
+            let servedObject = {}
+            for(let i = 0; i <= keys.length-1; i++) {
+              servedObject[keys[i]] = values[i]
+            }
+              servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+              if(servedObject.data != undefined && servedObject.data != null) {
+                servedObject.data = sizedTXT
+              }
+              response.answers.push(servedObject)
             if (i + 1 === dnsRecords.length) {
               send(response)
               console.log(response)
@@ -187,30 +149,21 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
             }
           }
         }
-        response.answers.push({
-          name: dnsRecord.name,
-          type: dnsRecord.type,
-          class: Packet.CLASS.IN,
-          ttl: mgcfg.isTTLForced(dnsRecord.ttl),
-          service: dnsRecord.data.service,
-          proto: dnsRecord.data.proto,
-          port: dnsRecord.data.port,
-          target: dnsRecord.data.target,
-          weight: dnsRecord.data.weight,
-          primary: dnsRecord.data.primary,
-          admin: dnsRecord.data.admin,
-          serial: dnsRecord.data.serial,
-          refresh: dnsRecord.data.refresh,
-          retry: dnsRecord.data.retry,
-          expiration: dnsRecord.data.expiration,
-          minimum: dnsRecord.data.minimum,
-          address: dnsRecord.data.address,
-          domain: dnsRecord.data.domain,
-          priority: dnsRecord.data.priority,
-          exchange: dnsRecord.data.exchange,
-          ns: dnsRecord.data.ns,
-          data: sizedTXT
-        })
+        dnsRecord = deMongo(dnsRecord)
+        datakeys = Object.keys(dnsRecord.data);
+        datavalues = Object.values(dnsRecord.data);
+        delete dnsRecord.data; // no longer needed
+        keys = Object.keys(dnsRecord);
+        values = Object.values(dnsRecord);
+        let servedObject = {}
+        for(let i = 0; i <= keys.length-2; i++) {
+          servedObject[keys[i]] = values[i]
+        }
+        for(let i = 0; i <= datakeys.length-1; i++) {
+          servedObject[datakeys[i]] = datavalues[i]
+        }
+          servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+          response.answers.push(servedObject)
       }
       if (iterations + 1 === dnsRecords.length) {
         send(response)
@@ -239,29 +192,19 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
               }
             }
           }
-          response.answers.push({
-            name: dnsRecord.name,
-            type: dnsRecord.type,
-            class: Packet.CLASS.IN,
-            ttl: mgcfg.isTTLForced(dnsRecord.ttl),
-            service: dnsRecord.data.service,
-            proto: dnsRecord.data.proto,
-            port: dnsRecord.data.port,
-            weight: dnsRecord.data.weight,
-            primary: dnsRecord.data.primary,
-            admin: dnsRecord.data.admin,
-            serial: dnsRecord.data.serial,
-            refresh: dnsRecord.data.refresh,
-            retry: dnsRecord.data.retry,
-            expiration: dnsRecord.data.expiration,
-            minimum: dnsRecord.data.minimum,
-            address: dnsRecord.data.address,
-            domain: dnsRecord.data.domain,
-            priority: dnsRecord.data.priority,
-            exchange: dnsRecord.data.exchange,
-            ns: dnsRecord.data.ns,
-            data: sizedTXT
-          })
+          keys = Object.keys(dnsRecord);
+          values = Object.values(dnsRecord);
+          datakeys = Object.keys(dnsRecord.data);
+          datavalues = Object.values(dnsRecord.data);
+          let servedObject = {}
+          for(let i = 0; i <= keys.length-2; i++) {
+            servedObject[keys[i]] = values[i]
+          }
+          for(let i = 0; i <= datakeys.length-1; i++) {
+            servedObject[datakeys[i]] = datavalues[i]
+          }
+            servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+            response.answers.push(servedObject)
           if (i + 1 === dnsRecords.length) {
             send(response)
             console.log(response)
