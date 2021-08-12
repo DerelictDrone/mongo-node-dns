@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const mgcfg = require("./connection_config.js");
 const cache = require('./functions/cache');
 const archive = require('./functions/archive');
-const { classTranslate, deMongo } = require('./functions/translator');
+const {
+  classTranslate,
+  deMongo
+} = require('./functions/translator');
 const mongoCache = require('./functions/resolveFromMongo');
 const jokes = require('./jokes.js');
 console.log("mongodb://" + mgcfg.mongopostuser + ":" + mgcfg.mongopostpass + "@" + mgcfg.mongoserver + ":" + mgcfg.mongoport + mgcfg.mongoargs)
@@ -33,18 +36,24 @@ const options = {
 
 const dns = new dns2(options);
 
-const { Packet } = dns2;
+const {
+  Packet
+} = dns2;
 
 const server = dns2.createUDPServer((request, send, rinfo) => {
   const response = Packet.createResponseFromRequest(request);
   const [question] = request.questions;
-  const { name } = question;
-  const { type } = question;
+  const {
+    name
+  } = question;
+  const {
+    type
+  } = question;
 
   mongoCache.resolveFromMongo(name, type).then(dnsRecord => {
     if (dnsRecord.length < 1) {
 
-      typeName = classTranslate(type,'TYPE')
+      typeName = classTranslate(type, 'TYPE')
 
       dnsRecords = dns.resolve(name, typeName).then(answer => {
         dnsRecords = answer.answers;
@@ -101,14 +110,14 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
             keys = Object.keys(dnsRecord);
             values = Object.values(dnsRecord);
             let servedObject = {}
-            for(let i = 0; i <= keys.length-1; i++) {
+            for (let i = 0; i <= keys.length - 1; i++) {
               servedObject[keys[i]] = values[i]
             }
-              servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
-              if(servedObject.data != undefined && servedObject.data != null) {
-                servedObject.data = sizedTXT
-              }
-              response.answers.push(servedObject)
+            servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+            if (servedObject.data != undefined && servedObject.data != null) {
+              servedObject.data = sizedTXT
+            }
+            response.answers.push(servedObject)
             if (i + 1 === dnsRecords.length) {
               send(response)
               console.log(response)
@@ -117,7 +126,7 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
           for (let i = 0; i < dnsRecords.length; i++) {
             dnsRecord = dnsRecords[i];
             cache.cacheRecord(dnsRecord);
-            if(mgcfg.archive) {
+            if (mgcfg.archive) {
               archive.archiveRecord(dnsRecord);
             }
           }
@@ -156,14 +165,14 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
         keys = Object.keys(dnsRecord);
         values = Object.values(dnsRecord);
         let servedObject = {}
-        for(let i = 0; i <= keys.length-2; i++) {
+        for (let i = 0; i <= keys.length - 2; i++) {
           servedObject[keys[i]] = values[i]
         }
-        for(let i = 0; i <= datakeys.length-1; i++) {
+        for (let i = 0; i <= datakeys.length - 1; i++) {
           servedObject[datakeys[i]] = datavalues[i]
         }
-          servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
-          response.answers.push(servedObject)
+        servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+        response.answers.push(servedObject)
       }
       if (iterations + 1 === dnsRecords.length) {
         send(response)
@@ -197,14 +206,14 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
           datakeys = Object.keys(dnsRecord.data);
           datavalues = Object.values(dnsRecord.data);
           let servedObject = {}
-          for(let i = 0; i <= keys.length-2; i++) {
+          for (let i = 0; i <= keys.length - 2; i++) {
             servedObject[keys[i]] = values[i]
           }
-          for(let i = 0; i <= datakeys.length-1; i++) {
+          for (let i = 0; i <= datakeys.length - 1; i++) {
             servedObject[datakeys[i]] = datavalues[i]
           }
-            servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
-            response.answers.push(servedObject)
+          servedObject.ttl = mgcfg.isTTLForced(dnsRecord.ttl)
+          response.answers.push(servedObject)
           if (i + 1 === dnsRecords.length) {
             send(response)
             console.log(response)

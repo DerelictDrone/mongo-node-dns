@@ -16,16 +16,15 @@ Blanket TTL delivered on cached requests, if index 2 is true any and all TTL's d
 Note: Affects both server-forwardonly and server.js, server-authorityonly will never force TTL since you're already
 setting the TTL on a per-record basis.
 */
-forcedTTL = [300,false]
+forcedTTL = [300, false]
 
-exports.isTTLForced = function(TTL) {
-  if(forcedTTL[1]) {
+exports.isTTLForced = function (TTL) {
+  if (forcedTTL[1]) {
     return forcedTTL[0]
-  }
-  else {
-    if(typeof(TTL) === 'object') {
-     actualTTL = TTL.getSeconds() - new Date(Date.now()).getSeconds()
-     return actualTTL
+  } else {
+    if (typeof (TTL) === 'object') {
+      actualTTL = TTL.getSeconds() - new Date(Date.now()).getSeconds()
+      return actualTTL
     } else {
       return TTL
     }
@@ -36,7 +35,7 @@ exports.isTTLForced = function(TTL) {
 exports.minTTL = 1200
 
 // Function run on unacceptably low TTL's before caching. Return a TTL in seconds
-exports.minTTLOverride = function(TTL) {
+exports.minTTLOverride = function (TTL) {
   return TTL * 5
 }
 
