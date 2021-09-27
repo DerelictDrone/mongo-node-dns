@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const cfg = require("./connection_config_auth.js");
 const mongoCache = require('./functions/resolveAuthorityFromMongo');
 const jokes = require('./jokes.js');
+const {
+  deMongo
+} = require('./functions/translator');
 console.log("mongodb://" + cfg.mongopostuser + ":" + cfg.mongopostpass + "@" + cfg.mongoserver + ":" + cfg.mongoport + cfg.mongoargs)
 mongoose.connect(
   "mongodb://" +
@@ -77,10 +80,11 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
         response.header.rcode = 0x03
         send(response);
       } else {
-
+        let iterations = 0
         let sizedTXT
         for (let i = 0; i < dnsRecords.length; i++) {
           dnsRecord = dnsRecords[i];
+          iterations = i
           if (type === 16 && dnsRecord.data.data != undefined || type === 46 && dnsRecord.data.data != undefined) {
             sizedTXT = dnsRecords.data;
             if (dnsRecord.data.data.length > 250) {
@@ -113,10 +117,10 @@ const server = dns2.createUDPServer((request, send, rinfo) => {
           for (let i = 0; i <= datakeys.length - 1; i++) {
             servedObject[datakeys[i]] = datavalues[i]
           }
-          servedObject.ttl = cfg.isTTLForced(dnsRecord.ttl)
+          servedObject['class'] = 0x01
           response.answers.push(servedObject)
         }
-        if (i + 1 === dnsRecords.length) {
+        if (iterations + 1 === dnsRecords.length) {
           console.log(response)
           response.header.ancount = response.answers.length
           response.header.aa = 0x01
